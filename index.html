@@ -2,59 +2,84 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Swagger UI</title>
-    <link rel="stylesheet" type="text/css" href="./swagger-ui.css" >
+    <link rel="stylesheet" type="text/css" href="./swagger-ui.css" />
     <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
     <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
     <style>
-      html
-      {
-        box-sizing: border-box;
+      html {
         overflow: -moz-scrollbars-vertical;
         overflow-y: scroll;
+        box-sizing: border-box;
       }
 
       *,
       *:before,
-      *:after
-      {
+      *:after {
         box-sizing: inherit;
       }
 
-      body
-      {
-        margin:0;
+      body {
+        margin: 0;
         background: #fafafa;
+      }
+
+      label {
+        color: white;
       }
     </style>
   </head>
 
   <body>
+    <select id="select">
+      <option value="v1">V 1.0</option>
+      <option value="v2">V 2.0</option>
+    </select>
     <div id="swagger-ui"></div>
 
-    <script src="./swagger-ui-bundle.js" charset="UTF-8"> </script>
-    <script src="./swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
+    <script src="./swagger-ui-bundle.js" charset="UTF-8"></script>
+    <script src="./swagger-ui-standalone-preset.js" charset="UTF-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.0/jquery.js"></script>
     <script>
-    window.onload = function() {
-      // Begin Swagger UI call region
-      const ui = SwaggerUIBundle({
-        url: "apiDoc.yml",
-        dom_id: '#swagger-ui',
-        deepLinking: true,
-        presets: [
-          SwaggerUIBundle.presets.apis,
-          SwaggerUIStandalonePreset
-        ],
-        plugins: [
-          SwaggerUIBundle.plugins.DownloadUrl
-        ],
-        layout: "StandaloneLayout"
-      })
-      // End Swagger UI call region
+      window.onload = function () {
+        $('#select').change(changeVersion)
 
-      window.ui = ui
-    }
-  </script>
+        function changeVersion(e) {
+          let version = $('#select').val()
+          swaggerUi()
+          $('.download-url-wrapper').empty()
+          $('.download-url-wrapper').prepend(` <select id="select">
+            <option value="v1">V 1.0</option>
+            <option value="v2">V 2.0</option>
+          </select>`)
+
+          $('#select').val(version)
+          $('#select').change(changeVersion)
+        }
+
+        swaggerUi()
+
+        $('.download-url-wrapper').empty()
+        $('.download-url-wrapper').prepend($('#select'))
+
+        function swaggerUi() {
+          let ver = $('#select').val()
+
+          // Begin Swagger UI call region
+          const ui = SwaggerUIBundle({
+            url: `${ver}.yml`,
+            dom_id: '#swagger-ui',
+            deepLinking: true,
+            presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+            plugins: [SwaggerUIBundle.plugins.DownloadUrl],
+            layout: 'StandaloneLayout',
+          })
+          // End Swagger UI call region
+
+          window.ui = ui
+        }
+      }
+    </script>
   </body>
 </html>
